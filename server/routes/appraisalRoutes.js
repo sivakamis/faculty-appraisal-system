@@ -9,9 +9,10 @@ const {
     updateAppraisalStatus
 } = require('../controllers/appraisalController');
 const { protect, admin } = require('../middleware/authMiddleware');
+const { validate, appraisalValidation } = require('../middleware/validationMiddleware');
 
 // Faculty Routes
-router.route('/').post(protect, submitAppraisal);
+router.route('/').post(protect, appraisalValidation, validate, submitAppraisal);
 router.route('/my').get(protect, getMyAppraisals);
 router.route('/:id').put(protect, updateAppraisal).delete(protect, deleteAppraisal);
 

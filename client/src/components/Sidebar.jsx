@@ -15,7 +15,8 @@ const Sidebar = () => {
     };
 
     const navItems = [
-        { path: '/dashboard', label: 'Overview', icon: Home, roles: ['faculty', 'admin'] },
+        { path: '/dashboard', label: 'Overview', icon: Home, roles: ['faculty', 'admin', 'student'] },
+        { path: '/feedback', label: 'Faculty Feedback', icon: Users, roles: ['student'] },
         { path: '/appraisal', label: 'Submit Appraisal', icon: FileText, roles: ['faculty'] },
         { path: '/my-appraisals', label: 'My Submissions', icon: PieChart, roles: ['faculty'] },
         { path: '/admin/dashboard', label: 'Admin Dashboard', icon: Users, roles: ['admin'] },

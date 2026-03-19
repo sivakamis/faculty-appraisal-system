@@ -7,12 +7,13 @@ import toast from 'react-hot-toast';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState('student');
     const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const res = await login(email, password);
+        const res = await login(email, password, role);
         if (res.success) {
             toast.success('Login successful!', { icon: '👏' });
             navigate('/dashboard');
@@ -61,6 +62,18 @@ const Login = () => {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                         />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-semibold text-secondary-700 mb-1.5 ml-1">Login As</label>
+                        <select
+                            className="input-field"
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
+                        >
+                            <option value="student">Student</option>
+                            <option value="faculty">Faculty</option>
+                            <option value="admin">Admin</option>
+                        </select>
                     </div>
                     <button className="btn-primary w-full justify-center text-lg mt-2">
                         Sign In

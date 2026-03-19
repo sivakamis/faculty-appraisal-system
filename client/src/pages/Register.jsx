@@ -11,7 +11,7 @@ const Register = () => {
         password: '',
         department: '',
         designation: '',
-        role: 'faculty'
+        role: 'student'
     });
     const [isLoading, setIsLoading] = useState(false);
     const { register } = useAuth();
@@ -23,6 +23,13 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Client-side validation
+        if (formData.password.length < 6) {
+            toast.error('Password must be at least 6 characters');
+            return;
+        }
+
         setIsLoading(true);
         console.log('Submitting registration form:', formData);
 
@@ -124,6 +131,7 @@ const Register = () => {
                             onChange={handleChange}
                             className="input-field"
                             required
+                            minLength="6"
                         />
                     </div>
 
@@ -135,6 +143,7 @@ const Register = () => {
                             className="input-field"
                             value={formData.role}
                         >
+                            <option value="student">Student</option>
                             <option value="faculty">Faculty</option>
                             <option value="admin">Admin</option>
                         </select>

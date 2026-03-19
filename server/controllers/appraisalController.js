@@ -1,4 +1,5 @@
 const Appraisal = require('../models/Appraisal');
+const Feedback = require('../models/Feedback');
 
 // @desc    Submit a new appraisal
 // @route   POST /api/appraisal
@@ -89,13 +90,60 @@ const deleteAppraisal = async (req, res) => {
     }
 }
 
-// @desc    Get all appraisals
-// @route   GET /api/admin/appraisals
+// @desc    Get all appraisals with calculated performance scores
+// @route   GET /api/appraisal/admin/all
 // @access  Private (Admin)
 const getAllAppraisals = async (req, res) => {
     try {
         const appraisals = await Appraisal.find({}).populate('faculty', 'name email department');
-        res.json(appraisals);
+        
+        // Calculate scores for each appraisal
+        const enrichedAppraisals = await Promise.all(appraisals.map(async (appraisal) => {
+            if (!appraisal.faculty) return appraisal;
+
+            const facultyId = appraisal.faculty._id;
+
+            // 1. Student Feedback (40%)
+            const feedbacks = await Feedback.find({ faculty: facultyId });
+            let feedbackScore = 0;
+            if (feedbacks.length > 0) {
+                const avgRating = feedbacks.reduce((acc, f) => {
+                    const totalRating = (f.teachingClarity + f.communication + f.subjectKnowledge + f.interaction) / 4;
+                    return acc + totalRating;
+                }, 0) / feedbacks.length;
+                feedbackScore = (avgRating / 5) * 100;
+            }
+
+            // 2. Research Publications (30%)
+            const researchScore = Math.min(100, (appraisal.publications?.length || 0) * 20);
+
+            // 3. Academic Contributions (20%) - Using projects as academic contributions
+            const academicScore = Math.min(100, (appraisal.projects?.length || 0) * 25);
+
+            // 4. Institutional Participation (10%) - Using achievements and certifications
+            const participationScore = Math.min(100, ((appraisal.achievements?.length || 0) + (appraisal.certifications?.length || 0)) * 20);
+
+            // Compute Final Score
+            const finalScore = Math.round(
+                (feedbackScore * 0.4) + 
+                (researchScore * 0.3) + 
+                (academicScore * 0.2) + 
+                (participationScore * 0.1)
+            );
+
+            return {
+                ...appraisal._doc,
+                performanceScore: finalScore,
+                scoreBreakdown: {
+                    feedback: Math.round(feedbackScore),
+                    research: Math.round(researchScore),
+                    academic: Math.round(academicScore),
+                    participation: Math.round(participationScore)
+                }
+            };
+        }));
+
+        res.json(enrichedAppraisals);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

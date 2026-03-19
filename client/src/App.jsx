@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import AppraisalForm from './pages/AppraisalForm';
 import AdminDashboard from './pages/AdminDashboard';
+import StudentFeedback from './pages/StudentFeedback';
 import ProtectedRoute from './components/ProtectedRoute';
 import LandingPage from './pages/LandingPage';
 import { Toaster } from 'react-hot-toast';
@@ -24,6 +25,7 @@ function App() {
             <Route path="/appraisal" element={<AppraisalForm />} />
             <Route path="/appraisal/edit/:id" element={<AppraisalForm />} />
             <Route path="/my-appraisals" element={<Dashboard />} />
+            <Route path="/feedback" element={<StudentFeedback />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={['admin']} />}>

@@ -17,14 +17,14 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    const login = async (email, password) => {
+    const login = async (email, password, role) => {
         try {
             const config = {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             };
-            const { data } = await axios.post('/api/auth/login', { email, password }, config);
+            const { data } = await axios.post('/api/auth/login', { email, password, role }, config);
             setUser(data);
             localStorage.setItem('userInfo', JSON.stringify(data));
             return { success: true };
@@ -46,6 +46,13 @@ export const AuthProvider = ({ children }) => {
             return { success: true };
         } catch (error) {
             console.error('Registration Error:', error.response?.data || error.message);
+
+            // Handle express-validator errors array
+            if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+                const errorMessages = error.response.data.errors.map(err => err.msg).join('. ');
+                return { success: false, message: errorMessages };
+            }
+
             return { success: false, message: error.response?.data?.message || 'Registration failed' };
         }
     };
