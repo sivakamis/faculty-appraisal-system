@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const path = require('path');
+const helmet = require('helmet');
 
 dotenv.config();
 
@@ -21,19 +21,15 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.log(err));
 
-// Static Front-End Files
-app.use(express.static(path.join(__dirname, '../client/dist')));
+// Security
+app.use(helmet());
 
-// Import Routes
+// Routes
 const authRoutes = require('./routes/authRoutes');
 const appraisalRoutes = require('./routes/appraisalRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
 const userRoutes = require('./routes/userRoutes');
 
-// Import Helmet
-const helmet = require('helmet');
-
-app.use(helmet());
 app.use('/api/auth', authRoutes);
 app.use('/api/appraisal', appraisalRoutes);
 app.use('/api/feedback', feedbackRoutes);
@@ -47,15 +43,6 @@ app.use((err, req, res, next) => {
         message: err.message,
         stack: process.env.NODE_ENV === 'production' ? null : err.stack,
     });
-});
-
-app.use((req, res, next) => {
-    // only handle GET requests using this catch-all
-    if (req.method === 'GET') {
-        res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
-    } else {
-        next();
-    }
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
