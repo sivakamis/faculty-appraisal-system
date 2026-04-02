@@ -13,5 +13,6 @@ api.interceptors.request.use((config) => {
     }
     return config;
 });
+console.log("Axios baseURL:", import.meta.env.VITE_API_URL);
 
 export default api;
