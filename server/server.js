@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 
 dotenv.config();
 
@@ -20,10 +21,8 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.log(err));
 
-// Routes Placeholder
-app.get('/', (req, res) => {
-    res.send('Faculty Appraisal System API Running');
-});
+// Static Front-End Files
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // Import Routes
 const authRoutes = require('./routes/authRoutes');
@@ -48,6 +47,15 @@ app.use((err, req, res, next) => {
         message: err.message,
         stack: process.env.NODE_ENV === 'production' ? null : err.stack,
     });
+});
+
+app.use((req, res, next) => {
+    // only handle GET requests using this catch-all
+    if (req.method === 'GET') {
+        res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+    } else {
+        next();
+    }
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
