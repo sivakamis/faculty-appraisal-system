@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { Check, X, Filter, Search, Users, FileText, Clock, CheckCircle, AlertCircle, Bell, ChevronRight, BarChart3, PieChart as PieChartIcon, TrendingUp, Award, BookOpen, UserCheck } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
@@ -40,7 +40,7 @@ const AdminDashboard = () => {
             const config = {
                 headers: { Authorization: `Bearer ${user.token}` },
             };
-            const { data } = await axios.get('/api/appraisal/admin/all', config);
+            const { data } = await api.get('/api/appraisal/admin/all', config);
             setAppraisals(data);
         } catch (error) {
             console.error('Error fetching appraisals:', error);
@@ -52,7 +52,7 @@ const AdminDashboard = () => {
             const config = {
                 headers: { Authorization: `Bearer ${user.token}` },
             };
-            const { data } = await axios.get('/api/users/admin/faculty', config);
+            const { data } = await api.get('/api/users/admin/faculty', config);
             setFacultyList(data);
         } catch (error) {
             console.error('Error fetching faculty:', error);
@@ -64,7 +64,7 @@ const AdminDashboard = () => {
             const config = {
                 headers: { Authorization: `Bearer ${user.token}` },
             };
-            const { data } = await axios.get('/api/users/admin/stats', config);
+            const { data } = await api.get('/api/users/admin/stats', config);
             setStats(data);
         } catch (error) {
             console.error('Error fetching stats:', error);
@@ -76,7 +76,7 @@ const AdminDashboard = () => {
             const config = {
                 headers: { Authorization: `Bearer ${user.token}` },
             };
-            await axios.put(`/api/appraisal/admin/${id}/status`, { status, score: currentScore, remarks }, config);
+            await api.put(`/api/appraisal/admin/${id}/status`, { status, score: currentScore, remarks }, config);
             await fetchAppraisals();
             await fetchStats();
             setSelectedAppraisal(null);

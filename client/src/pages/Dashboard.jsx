@@ -1,6 +1,6 @@
 import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { 
     FileCheck, Clock, CheckCircle, XCircle, 
     Bell, User, BookOpen, Award, GraduationCap,
@@ -30,12 +30,12 @@ const Dashboard = () => {
                 };
                 
                 // Fetch appraisals
-                const { data: appraisalData } = await axios.get('/api/appraisal/my', config);
+                const { data: appraisalData } = await api.get('/api/appraisal/my', config);
                 setAppraisals(appraisalData);
 
                 // Fetch performance profile
                 if (user.role === 'faculty') {
-                    const { data: profileData } = await axios.get(`/api/users/profile/${user._id}`, config);
+                    const { data: profileData } = await api.get(`/api/users/profile/${user._id}`, config);
                     setPerformance(profileData.scoreBreakdown);
                 }
             } catch (error) {
@@ -56,7 +56,7 @@ const Dashboard = () => {
                 const config = {
                     headers: { Authorization: `Bearer ${user.token}` },
                 };
-                await axios.delete(`/api/appraisal/${id}`, config);
+                await api.delete(`/api/appraisal/${id}`, config);
                 setAppraisals(appraisals.filter(a => a._id !== id));
             } catch (error) {
                 console.error('Failed to delete appraisal:', error);

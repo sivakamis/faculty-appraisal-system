@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { Send, FileText } from 'lucide-react';
 
@@ -25,7 +25,7 @@ const AppraisalForm = () => {
                     const config = {
                         headers: { Authorization: `Bearer ${user.token}` },
                     };
-                    const { data } = await axios.get('/api/appraisal/my', config);
+                    const { data } = await api.get('/api/appraisal/my', config);
                     const appraisal = data.find(a => a._id === id);
                     if (appraisal) {
                         setFormData({
@@ -67,10 +67,10 @@ const AppraisalForm = () => {
             };
 
             if (id) {
-                await axios.put(`/api/appraisal/${id}`, payload, config);
+                await api.put(`/api/appraisal/${id}`, payload, config);
                 setSuccess('Appraisal updated successfully!');
             } else {
-                await axios.post('/api/appraisal', payload, config);
+                await api.post('/api/appraisal', payload, config);
                 setSuccess('Appraisal submitted successfully!');
             }
             setTimeout(() => navigate('/dashboard'), 2000);

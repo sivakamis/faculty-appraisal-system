@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from '../services/api';
 import { Search, UserCheck, Star, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -27,7 +27,7 @@ const StudentFeedback = () => {
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-            const { data } = await axios.get(`/api/users/faculty?search=${searchQuery}`, config);
+            const { data } = await api.get(`/api/users/faculty?search=${searchQuery}`, config);
             setFacultyList(data);
         } catch (error) {
             toast.error('Failed to search faculty');
@@ -56,7 +56,7 @@ const StudentFeedback = () => {
                 },
             };
             const payload = { ...feedback, facultyId: selectedFaculty._id };
-            await axios.post('/api/feedback', payload, config);
+            await api.post('/api/feedback', payload, config);
 
             toast.success(`Feedback submitted for ${selectedFaculty.name}!`);
             setSelectedFaculty(null);
